@@ -61,7 +61,7 @@ def read_book_list(
     return crud.get_books_list(db=db, skip=skip, limit=limit)
 
 
-@router.get("/books/{author_id}/", response_model=list[serializers.Book])
+@router.get("/books/{author_id}/", response_model=List[serializers.Book])
 def get_single_book(
         author_id: int,
         db: Session = Depends(get_db)
