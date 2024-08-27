@@ -26,14 +26,14 @@ def read_authors_list(
 
 @router.get("/authors/{author_id}", response_model=serializers.Author)
 def read_author_by_id(author_id: int, db: Session = Depends(get_db)):
-    authors = crud.get_author_by_id(db, author_id)
+    author = crud.get_author_by_id(db, author_id)
 
-    if authors is None:
+    if not author:
         raise HTTPException(
             status_code=404,
             detail="Author not exists"
         )
-    return authors
+    return author
 
 
 @router.post("/authors/", response_model=serializers.Author)
@@ -66,12 +66,13 @@ def get_single_book(
         author_id: int,
         db: Session = Depends(get_db)
 ):
-    db_books = crud.get_books_by_author_id(author_id=author_id, db=db)
+    author = read_author_by_id(author_id=author_id, db=db)
+    db_books = crud.get_books_by_author_id(author_id=author.id, db=db)
 
-    if db_books is None:
+    if not db_books:
         raise HTTPException(
             status_code=404,
-            detail="Books not found"
+            detail="Books for that author not found"
         )
 
     return db_books
